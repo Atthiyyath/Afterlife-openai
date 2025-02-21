@@ -64,7 +64,26 @@ namespace Samples.Whisper
 
             isRecording = false;
             Microphone.End(null);
+            
+            if (clip == null)
+            {
+                Debug.LogError("Audio clip is null! No recording data available.");
+                return;
+            }
+
+            if (clip.samples == 0)
+            {
+                Debug.LogError("Audio clip has no samples! Recording might have failed.");
+                return;
+            }
+            
+            // Save the recorded audio to a file
+            string path = Application.persistentDataPath + "/" + fileName;
             byte[] data = SaveWav.Save(fileName, clip);
+            
+            // Manually save the file
+            System.IO.File.WriteAllBytes(path, data);
+            Debug.Log("Audio file saved at: " + path);
             
             //var req = new CreateAudioTranscriptionsRequest --> for request to transcript the audio <--
             var req = new CreateAudioTranslationRequest // -- for request to translate the audio

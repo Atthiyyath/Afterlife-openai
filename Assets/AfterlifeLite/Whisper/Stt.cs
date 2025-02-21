@@ -4,12 +4,10 @@ using UnityEngine.UI;
 
 namespace Samples.Whisper
 {
-    public class Whisper_BAK : MonoBehaviour
+    public class Stt : MonoBehaviour
     {
         [SerializeField] private Button recordButton;
         [SerializeField] private Image progressBar;
-        [SerializeField] private Text message;
-        [SerializeField] private Dropdown dropdown;
         
         private readonly string fileName = "output.wav";
         private readonly int duration = 5;
@@ -18,63 +16,69 @@ namespace Samples.Whisper
         private bool isRecording;
         private float time;
         private OpenAIApi openai = new OpenAIApi();
+        private string selectedMicrophone;
+        
+        public delegate void TranscriptionHandler(string text);
+        public event TranscriptionHandler OnTranscriptionComplete;
 
         private void Start()
         {
             #if UNITY_WEBGL && !UNITY_EDITOR
-            dropdown.options.Add(new Dropdown.OptionData("Microphone not supported on WebGL"));
+            Debug.LogError("Microphone not supported on WebGL");
             #else
-            foreach (var device in Microphone.devices)
+            if (Microphone.devices.Length > 0)
             {
-                dropdown.options.Add(new Dropdown.OptionData(device));
+                selectedMicrophone = Microphone.devices[0]; // Auto-select first available microphone
+            }
+            else
+            {
+                Debug.LogError("No microphone detected!");
             }
             recordButton.onClick.AddListener(StartRecording);
-            dropdown.onValueChanged.AddListener(ChangeMicrophone);
-            
-            var index = PlayerPrefs.GetInt("user-mic-device-index");
-            dropdown.SetValueWithoutNotify(index);
             #endif
         }
 
-        private void ChangeMicrophone(int index)
-        {
-            PlayerPrefs.SetInt("user-mic-device-index", index);
-        }
-        
         private void StartRecording()
         {
+            if (string.IsNullOrEmpty(selectedMicrophone))
+            {
+                Debug.LogError("No microphone available to start recording.");
+                return;
+            }
             isRecording = true;
             recordButton.enabled = false;
-
-            var index = PlayerPrefs.GetInt("user-mic-device-index");
-            
+            progressBar.fillAmount = 0;
+            time = 0;
             #if !UNITY_WEBGL
-            clip = Microphone.Start(dropdown.options[index].text, false, duration, 44100);
+            clip = Microphone.Start(selectedMicrophone, false, duration, 44100);
             #endif
         }
 
         private async void EndRecording()
         {
-            message.text = "Transcripting...";
+            isRecording = false;
+            Microphone.End(selectedMicrophone);
+            recordButton.enabled = true;
+            progressBar.fillAmount = 0;
             
-            #if !UNITY_WEBGL
-            Microphone.End(null);
-            #endif
+            if (clip == null || clip.samples == 0)
+            {
+                Debug.LogError("Recording failed or no audio captured.");
+                return;
+            }
             
+            string path = Application.persistentDataPath + "/" + fileName;
             byte[] data = SaveWav.Save(fileName, clip);
+            System.IO.File.WriteAllBytes(path, data);
             
-            var req = new CreateAudioTranscriptionsRequest
+            var req = new CreateAudioTranslationRequest
             {
                 FileData = new FileData() {Data = data, Name = "audio.wav"},
-                // File = Application.persistentDataPath + "/" + fileName,
                 Model = "whisper-1",
-                Language = "en"
             };
-            var res = await openai.CreateAudioTranscription(req);
-
-            progressBar.fillAmount = 0;
-            message.text = res.Text;
-            recordButton.enabled = true;
+            
+            var res = await openai.CreateAudioTranslation(req);
+            OnTranscriptionComplete?.Invoke(res.Text);
         }
 
         private void Update()
