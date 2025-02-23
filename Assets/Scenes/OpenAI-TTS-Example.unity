@@ -3993,7 +3993,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8996109759252394209, guid: b54076d3a1b3342448a41fd8732dd04a, type: 3}
       propertyPath: openAIKey
-      value: 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
+      value: 
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
