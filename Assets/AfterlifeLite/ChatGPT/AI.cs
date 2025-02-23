@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
 using Samples.Whisper;
+using System.Threading.Tasks;
 
 namespace OpenAI
 {
@@ -11,6 +12,13 @@ namespace OpenAI
         [SerializeField] private Stt stt;
         [SerializeField] private RectTransform sent;
         [SerializeField] private RectTransform received;
+        
+        private OpenAIWrapper openAIWrapper;
+        [SerializeField] private TTSManager ttsManager;
+        [SerializeField] private AudioPlayer audioPlayer;
+        [SerializeField] private TTSModel model = TTSModel.TTS_1;
+        [SerializeField] private TTSVoice voice = TTSVoice.Alloy;
+        [SerializeField, Range(0.25f, 4.0f)] private float speed = 1f;
 
         private float height;
         private OpenAIApi openai = new OpenAIApi();
@@ -23,12 +31,23 @@ namespace OpenAI
             {
                 stt.OnTranscriptionComplete += HandleTranscription;
             }
+            
+            if (!openAIWrapper) openAIWrapper = FindObjectOfType<OpenAIWrapper>();
+            if (!audioPlayer) audioPlayer = GetComponentInChildren<AudioPlayer>();
         }
 
         private void HandleTranscription(string text)
         {
             SendReply(text);
         }
+        
+        private void OnEnable()
+        {
+            if (!openAIWrapper) openAIWrapper = FindObjectOfType<OpenAIWrapper>();
+            if (!audioPlayer) audioPlayer = GetComponentInChildren<AudioPlayer>();
+        }
+        
+        private void OnValidate() => OnEnable();
 
         private void AppendMessage(ChatMessage message)
         {
@@ -61,10 +80,37 @@ namespace OpenAI
                 message.Content = message.Content.Trim();
                 messages.Add(message);
                 AppendMessage(message);
+                
+                // Ensure text-to-speech conversion for AI responses
+                ConvertTextToSpeech(message.Content);
             }
             else
             {
                 Debug.LogWarning("No response generated.");
+            }
+        }
+        
+        public async void ConvertTextToSpeech(string text)
+        {
+            if (string.IsNullOrEmpty(text)) return;
+            
+            Debug.Log("Trying to synthesize: " + text);
+            
+            if (openAIWrapper == null || audioPlayer == null)
+            {
+                Debug.LogError("Missing OpenAIWrapper or AudioPlayer reference.");
+                return;
+            }
+            
+            byte[] audioData = await openAIWrapper.RequestTextToSpeech(text, model, voice, speed);
+            if (audioData != null && audioData.Length > 0)
+            {
+                Debug.Log("Playing synthesized speech.");
+                audioPlayer.ProcessAudioBytes(audioData);
+            }
+            else
+            {
+                Debug.LogError("Failed to synthesize speech from OpenAI.");
             }
         }
     }

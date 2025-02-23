@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "com.openai.api.unity": "https://github.com/hexthedev/OpenAi-Api-Unity.git",
     "com.srcnalt.openai-unity": "https://github.com/srcnalt/OpenAI-Unity.git",
     "com.unity.adaptiveperformance.samsung.android": "5.0.0",
     "com.unity.collab-proxy": "2.7.1",

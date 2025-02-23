@@ -67,9 +67,9 @@ namespace Samples.Whisper
                 return;
             }
             
-            string path = Application.persistentDataPath + "/" + fileName;
+            //string path = Application.persistentDataPath + "/" + fileName;
             byte[] data = SaveWav.Save(fileName, clip);
-            System.IO.File.WriteAllBytes(path, data);
+            //System.IO.File.WriteAllBytes(path, data);
             
             var req = new CreateAudioTranslationRequest
             {
