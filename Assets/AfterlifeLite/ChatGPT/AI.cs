@@ -1,7 +1,10 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
 using Samples.Whisper;
+using System.IO;
+using UnityEngine.Networking;
 using System.Threading.Tasks;
 
 namespace OpenAI
@@ -19,11 +22,13 @@ namespace OpenAI
         [SerializeField] private TTSModel model = TTSModel.TTS_1;
         [SerializeField] private TTSVoice voice = TTSVoice.Alloy;
         [SerializeField, Range(0.25f, 4.0f)] private float speed = 1f;
+        
+        [SerializeField] private AudioLoader audioLoader;
 
         private float height;
         private OpenAIApi openai = new OpenAIApi();
         private List<ChatMessage> messages = new List<ChatMessage>();
-        private string prompt = "You're a deceased person and will help the sender to erase their longing, remember to act naturally";
+        private string prompt = "You're a deceased person and will help the sender to erase their longing, remember to act naturally and answer shortly";
 
         private void Start()
         {
@@ -93,25 +98,60 @@ namespace OpenAI
         public async void ConvertTextToSpeech(string text)
         {
             if (string.IsNullOrEmpty(text)) return;
-            
+    
             Debug.Log("Trying to synthesize: " + text);
-            
+    
             if (openAIWrapper == null || audioPlayer == null)
             {
                 Debug.LogError("Missing OpenAIWrapper or AudioPlayer reference.");
                 return;
             }
-            
+    
             byte[] audioData = await openAIWrapper.RequestTextToSpeech(text, model, voice, speed);
+    
             if (audioData != null && audioData.Length > 0)
             {
                 Debug.Log("Playing synthesized speech.");
-                audioPlayer.ProcessAudioBytes(audioData);
+                //audioPlayer.ProcessAudioBytes(audioData);
+
+                // Save the audio file
+                SaveAudioToFile(audioData, "TTS_Output.wav");
             }
             else
             {
                 Debug.LogError("Failed to synthesize speech from OpenAI.");
             }
+        }
+
+        private void SaveAudioToFile(byte[] audioData, string fileName)
+        {
+            string relativePath = "Assets/Resources/Audio/";
+            string filePath = Path.Combine(relativePath, fileName);
+
+            // Ensure the directory exists
+            if (!Directory.Exists(relativePath))
+            {
+                Directory.CreateDirectory(relativePath);
+            }
+
+            // Write the file
+            File.WriteAllBytes(filePath, audioData);
+            Debug.Log($"Audio saved at: {filePath}");
+
+            // Refresh the Unity Editor to detect the new file
+            #if UNITY_EDITOR
+            UnityEditor.AssetDatabase.ImportAsset(filePath);
+            UnityEditor.AssetDatabase.Refresh();
+            #endif
+
+            // Load and play the audio
+            Invoke("LoadAndAssignAudio", 1.0f);
+        }
+
+        private void LoadAndAssignAudio()
+        {
+            Debug.Log("Play audio!");
+            audioLoader.LoadAndPlayAudio();
         }
     }
 }
