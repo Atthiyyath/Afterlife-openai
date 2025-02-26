@@ -72,5 +72,5 @@ crashlytics-build.properties
 /[Aa]ssets/[Ss]treamingAssets/aa.meta
 /[Aa]ssets/[Ss]treamingAssets/aa/*
 
-Assets/StreamingAssets/config.js
-Assets/StreamingAssets/config.js.meta
+Assets/StreamingAssets/config.json
+Assets/StreamingAssets/config.json.meta
