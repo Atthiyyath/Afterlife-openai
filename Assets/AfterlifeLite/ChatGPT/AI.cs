@@ -124,34 +124,86 @@ namespace OpenAI
         }
 
         private void SaveAudioToFile(byte[] audioData, string fileName)
+{
+    string directoryPath;
+    
+    #if UNITY_EDITOR
+        directoryPath = Path.Combine(Application.dataPath, "Resources/Audio"); // Editor
+    #else
+        directoryPath = Path.Combine(Application.persistentDataPath, "Audio"); // Android
+    #endif
+
+    if (!Directory.Exists(directoryPath))
+    {
+        Directory.CreateDirectory(directoryPath);
+    }
+
+    string filePath = Path.Combine(directoryPath, fileName);
+    File.WriteAllBytes(filePath, audioData);
+    Debug.Log($"Audio saved at: {filePath}");
+
+    #if UNITY_EDITOR
+        UnityEditor.AssetDatabase.ImportAsset("Assets/Resources/Audio/" + fileName);
+        UnityEditor.AssetDatabase.Refresh();
+    #endif
+
+    // Load and play the audio
+    Invoke("LoadAndPlayAudio", 1.0f);
+}
+
+public void LoadAndPlayAudio()
+{
+    #if UNITY_EDITOR
+        // Load from Resources folder in the Editor
+        AudioLoader audioLoader = FindObjectOfType<AudioLoader>();
+        if (audioLoader != null)
         {
-            string relativePath = "Assets/Resources/Audio/";
-            string filePath = Path.Combine(relativePath, fileName);
-
-            // Ensure the directory exists
-            if (!Directory.Exists(relativePath))
-            {
-                Directory.CreateDirectory(relativePath);
-            }
-
-            // Write the file
-            File.WriteAllBytes(filePath, audioData);
-            Debug.Log($"Audio saved at: {filePath}");
-
-            // Refresh the Unity Editor to detect the new file
-            #if UNITY_EDITOR
-            UnityEditor.AssetDatabase.ImportAsset(filePath);
-            UnityEditor.AssetDatabase.Refresh();
-            #endif
-
-            // Load and play the audio
-            Invoke("LoadAndAssignAudio", 1.0f);
-        }
-
-        private void LoadAndAssignAudio()
-        {
-            Debug.Log("Play audio!");
             audioLoader.LoadAndPlayAudio();
         }
+        else
+        {
+            Debug.LogError("AudioLoader component not found!");
+        }
+    #else
+        // Load from persistentDataPath on Android
+        StartCoroutine(LoadAudioFromFile());
+    #endif
+}
+
+private IEnumerator LoadAudioFromFile()
+{
+    string filePath = Path.Combine(Application.persistentDataPath, "Audio/TTS_Output.wav");
+
+    if (!File.Exists(filePath))
+    {
+        Debug.LogError("Audio file not found!");
+        yield break;
+    }
+
+    using (UnityWebRequest www = UnityWebRequestMultimedia.GetAudioClip("file://" + filePath, AudioType.WAV))
+    {
+        yield return www.SendWebRequest();
+
+        if (www.result == UnityWebRequest.Result.Success)
+        {
+            AudioClip clip = DownloadHandlerAudioClip.GetContent(www);
+
+            AudioLoader audioLoader = FindObjectOfType<AudioLoader>();
+            if (audioLoader != null && audioLoader.TryGetComponent(out AudioSource audioSource))
+            {
+                audioSource.clip = clip;
+                audioSource.Play();
+            }
+            else
+            {
+                Debug.LogError("AudioLoader or AudioSource component missing!");
+            }
+        }
+        else
+        {
+            Debug.LogError("Failed to load audio: " + www.error);
+        }
+    }
+}
     }
 }

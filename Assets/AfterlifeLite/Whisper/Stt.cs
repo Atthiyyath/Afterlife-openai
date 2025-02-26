@@ -1,6 +1,9 @@
 ﻿using OpenAI;
 using UnityEngine;
 using UnityEngine.UI;
+using System.Collections;
+using System.IO;
+using UnityEngine.Android;
 
 namespace Samples.Whisper
 {
@@ -17,7 +20,7 @@ namespace Samples.Whisper
         private float time;
         private OpenAIApi openai = new OpenAIApi();
         private string selectedMicrophone;
-        
+
         public delegate void TranscriptionHandler(string text);
         public event TranscriptionHandler OnTranscriptionComplete;
 
@@ -26,6 +29,21 @@ namespace Samples.Whisper
             #if UNITY_WEBGL && !UNITY_EDITOR
             Debug.LogError("Microphone not supported on WebGL");
             #else
+            StartCoroutine(RequestMicrophonePermission());
+            recordButton.onClick.AddListener(StartRecording);
+            #endif
+        }
+
+        private IEnumerator RequestMicrophonePermission()
+        {
+            #if UNITY_ANDROID
+            if (!Permission.HasUserAuthorizedPermission(Permission.Microphone))
+            {
+                Permission.RequestUserPermission(Permission.Microphone);
+                yield return new WaitUntil(() => Permission.HasUserAuthorizedPermission(Permission.Microphone));
+            }
+            #endif
+
             if (Microphone.devices.Length > 0)
             {
                 selectedMicrophone = Microphone.devices[0]; // Auto-select first available microphone
@@ -34,8 +52,6 @@ namespace Samples.Whisper
             {
                 Debug.LogError("No microphone detected!");
             }
-            recordButton.onClick.AddListener(StartRecording);
-            #endif
         }
 
         private void StartRecording()
@@ -49,9 +65,7 @@ namespace Samples.Whisper
             recordButton.enabled = false;
             progressBar.fillAmount = 0;
             time = 0;
-            #if !UNITY_WEBGL
             clip = Microphone.Start(selectedMicrophone, false, duration, 44100);
-            #endif
         }
 
         private async void EndRecording()
@@ -66,10 +80,11 @@ namespace Samples.Whisper
                 Debug.LogError("Recording failed or no audio captured.");
                 return;
             }
-            
-            //string path = Application.persistentDataPath + "/" + fileName;
-            byte[] data = SaveWav.Save(fileName, clip);
-            //System.IO.File.WriteAllBytes(path, data);
+
+            // Save to persistent data path (works on Android)
+            string path = Path.Combine(Application.persistentDataPath, fileName);
+            byte[] data = SaveWav.Save(path, clip);
+            Debug.Log("Saved Audio to: " + path);
             
             var req = new CreateAudioTranslationRequest
             {
