@@ -779,7 +779,7 @@ MonoBehaviour:
   ttsManager: {fileID: 262180226}
   audioPlayer: {fileID: 262180225}
   model: 0
-  voice: 4
+  voice: 5
   speed: 1
   audioLoader: {fileID: 123721438}
 --- !u!1 &568821184
@@ -1226,7 +1226,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 867825016}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 862100421}
+        m_TargetAssemblyTypeName: Samples.Whisper.Stt, Assembly-CSharp
+        m_MethodName: StartRecording
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &867825016
 MonoBehaviour:
   m_ObjectHideFlags: 0
