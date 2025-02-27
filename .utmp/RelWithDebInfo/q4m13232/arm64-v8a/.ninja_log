@@ -1,0 +1,23 @@
+# ninja log v5
+11	2995	7623530948346287	GameActivity/CMakeFiles/game.dir/UGAApplication.cpp.o	10d909ab1c960a93
+107	559	7623530924104940	FramePacing/CMakeFiles/swappywrapper.dir/UnitySwappyWrapper.cpp.o	7c9cd5626766364c
+560	874	7623530927185991	D:/Afterlife-openai/Library/Bee/Android/Prj/IL2CPP/Gradle/unityLibrary/build/intermediates/cxx/RelWithDebInfo/q4m13232/obj/arm64-v8a/libswappywrapper.so	e2e1ff2e2cdcb84
+72	2413	7623530942538907	GameActivity/CMakeFiles/game.dir/UGAInputKeyEvent.cpp.o	440c4c645c72401c
+42	2409	7623530942493371	GameActivity/CMakeFiles/game.dir/UGAEntry.cpp.o	fdc260de16f6cea8
+52	2451	7623530942930189	GameActivity/CMakeFiles/game.dir/UGAConfiguration.cpp.o	6d56f1f2b8355171
+94	2561	7623530944037488	GameActivity/CMakeFiles/game.dir/UGASoftKeyboard.cpp.o	3c3a7856bab4882b
+21	2565	7623530944077667	GameActivity/CMakeFiles/game.dir/UGADebug.cpp.o	a098d9fbe6557bec
+82	2454	7623530942950238	GameActivity/CMakeFiles/game.dir/UGAInputMotionEvent.cpp.o	7d053bbfffe9021d
+62	2859	7623530947003421	GameActivity/CMakeFiles/game.dir/UGAInput.cpp.o	9a67d6401893c7b2
+2995	3202	7623530950504316	D:/Afterlife-openai/Library/Bee/Android/Prj/IL2CPP/Gradle/unityLibrary/build/intermediates/cxx/RelWithDebInfo/q4m13232/obj/arm64-v8a/libgame.so	7fd0da9bfec04573
+153	563	7623550542762661	FramePacing/CMakeFiles/swappywrapper.dir/UnitySwappyWrapper.cpp.o	7c9cd5626766364c
+564	943	7623550546509664	D:/Afterlife-openai/Library/Bee/Android/Prj/IL2CPP/Gradle/unityLibrary/build/intermediates/cxx/RelWithDebInfo/q4m13232/obj/arm64-v8a/libswappywrapper.so	e2e1ff2e2cdcb84
+28	2105	7623550558086488	GameActivity/CMakeFiles/game.dir/UGAEntry.cpp.o	fdc260de16f6cea8
+103	2132	7623550557747992	GameActivity/CMakeFiles/game.dir/UGAInputKeyEvent.cpp.o	440c4c645c72401c
+119	2154	7623550558544209	GameActivity/CMakeFiles/game.dir/UGAInputMotionEvent.cpp.o	7d053bbfffe9021d
+73	2204	7623550559053785	GameActivity/CMakeFiles/game.dir/UGAConfiguration.cpp.o	6d56f1f2b8355171
+52	2231	7623550559401380	GameActivity/CMakeFiles/game.dir/UGADebug.cpp.o	a098d9fbe6557bec
+137	2264	7623550559721191	GameActivity/CMakeFiles/game.dir/UGASoftKeyboard.cpp.o	3c3a7856bab4882b
+88	2524	7623550562393284	GameActivity/CMakeFiles/game.dir/UGAInput.cpp.o	9a67d6401893c7b2
+18	2606	7623550563147563	GameActivity/CMakeFiles/game.dir/UGAApplication.cpp.o	10d909ab1c960a93
+2606	2773	7623550564892577	D:/Afterlife-openai/Library/Bee/Android/Prj/IL2CPP/Gradle/unityLibrary/build/intermediates/cxx/RelWithDebInfo/q4m13232/obj/arm64-v8a/libgame.so	7fd0da9bfec04573

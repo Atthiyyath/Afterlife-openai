@@ -1,0 +1,12 @@
+# ninja log v5
+107	373	7622771928077100	FramePacing/CMakeFiles/swappywrapper.dir/UnitySwappyWrapper.cpp.o	5f01013c8ac38881
+375	724	7622771931514617	D:/Afterlife-openai/Library/Bee/Android/Prj/IL2CPP/Gradle/unityLibrary/build/intermediates/cxx/RelWithDebInfo/q4m13232/obj/armeabi-v7a/libswappywrapper.so	97d18a83b719186c
+0	1766	7622771941899112	GameActivity/CMakeFiles/game.dir/UGAConfiguration.cpp.o	564f84a53f4e7f73
+48	1779	7622771941989643	GameActivity/CMakeFiles/game.dir/UGAInputKeyEvent.cpp.o	b91e0b600e27381
+61	1808	7622771942317862	GameActivity/CMakeFiles/game.dir/UGAEntry.cpp.o	808a0122a4ec34a1
+91	1894	7622771943185643	GameActivity/CMakeFiles/game.dir/UGAInputMotionEvent.cpp.o	f2d981d6b7cee616
+11	1907	7622771943291502	GameActivity/CMakeFiles/game.dir/UGADebug.cpp.o	d4de79dcae645d92
+75	1974	7622771944065434	GameActivity/CMakeFiles/game.dir/UGASoftKeyboard.cpp.o	52acd93f50de1e43
+34	2122	7622771945496843	GameActivity/CMakeFiles/game.dir/UGAInput.cpp.o	2e1f716e1a1eb752
+23	2236	7622771946635594	GameActivity/CMakeFiles/game.dir/UGAApplication.cpp.o	60c2724456384898
+2236	2396	7622771948315666	D:/Afterlife-openai/Library/Bee/Android/Prj/IL2CPP/Gradle/unityLibrary/build/intermediates/cxx/RelWithDebInfo/q4m13232/obj/armeabi-v7a/libgame.so	d49cf87d0585de72
