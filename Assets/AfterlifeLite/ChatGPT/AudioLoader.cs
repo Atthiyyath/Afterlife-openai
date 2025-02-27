@@ -5,7 +5,7 @@ using UnityEngine.Networking;
 
 public class AudioLoader : MonoBehaviour
 {
-    public string audioFileName = "TTS_Output"; // Set the file name (without extension)
+    public string audioFileName = "TTS_Output"; // Filename without extension
     private AudioClip audioClip;
     private AudioSource audioSource;
 
@@ -16,34 +16,20 @@ public class AudioLoader : MonoBehaviour
 
     public void LoadAndPlayAudio()
     {
-        #if UNITY_EDITOR
-            // Load from Resources folder in Editor
-            audioClip = Resources.Load<AudioClip>("Audio/" + audioFileName);
-            if (audioClip != null)
-            {
-                PlayAudio(audioClip);
-            }
-            else
-            {
-                Debug.LogWarning("Audio file not found in Resources: " + audioFileName);
-            }
-        #else
-            // Load from persistentDataPath on Android
-            StartCoroutine(LoadAudioFromPersistentPath());
-        #endif
+        StartCoroutine(LoadAudioFromPersistentPath());
     }
 
     private IEnumerator LoadAudioFromPersistentPath()
     {
-        string filePath = Path.Combine(Application.persistentDataPath, "Audio", audioFileName + ".wav");
+        string filePath = Path.Combine(Application.persistentDataPath, "Audio", audioFileName + ".mp3");
 
         if (!File.Exists(filePath))
         {
-            Debug.LogError("Audio file not found in persistentDataPath: " + filePath);
+            Debug.LogError("Audio file not found: " + filePath);
             yield break;
         }
 
-        using (UnityWebRequest www = UnityWebRequestMultimedia.GetAudioClip("file://" + filePath, AudioType.WAV))
+        using (UnityWebRequest www = UnityWebRequestMultimedia.GetAudioClip("file://" + filePath, AudioType.MPEG))
         {
             yield return www.SendWebRequest();
 
