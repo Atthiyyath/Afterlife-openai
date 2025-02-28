@@ -1,10 +1,14 @@
 using UnityEngine;
 using System.IO;
+using UnityEngine.UI;
 using System.Collections;
 using UnityEngine.Networking;
 
 public class AudioLoader : MonoBehaviour
 {
+    [SerializeField] private Button recordButton;
+    [SerializeField] private Image progressBar;
+    
     public string audioFileName = "TTS_Output"; // Filename without extension
     private AudioClip audioClip;
     private AudioSource audioSource;
@@ -52,10 +56,33 @@ public class AudioLoader : MonoBehaviour
             audioSource.clip = clip;
             audioSource.Play();
             Debug.Log("Playing Audio: " + clip.name);
+            
+            Invoke(nameof(EnableButton), audioSource.clip.length);
         }
         else
         {
             Debug.LogError("AudioSource or AudioClip is null!");
+        }
+    }
+
+    private void EnableButton()
+    {
+        recordButton.enabled = true;
+        progressBar.fillAmount = 0;
+        ChangeButtonAlpha(recordButton, 1f);
+    }
+    
+    private void ChangeButtonAlpha(Button button, float alpha)
+    {
+        if (button != null)
+        {
+            Image buttonImage = button.GetComponent<Image>();
+            if (buttonImage != null)
+            {
+                Color newColor = buttonImage.color;
+                newColor.a = alpha; // Change alpha
+                buttonImage.color = newColor;
+            }
         }
     }
 }

@@ -54,7 +54,7 @@ namespace Samples.Whisper
             }
         }
 
-        private void StartRecording()
+        public void StartRecording()
         {
             if (string.IsNullOrEmpty(selectedMicrophone))
             {
@@ -66,14 +66,18 @@ namespace Samples.Whisper
             progressBar.fillAmount = 0;
             time = 0;
             clip = Microphone.Start(selectedMicrophone, false, duration, 44100);
+            
+            ChangeButtonAlpha(recordButton, 0.5f);
         }
 
         private async void EndRecording()
         {
             isRecording = false;
             Microphone.End(selectedMicrophone);
-            recordButton.enabled = true;
-            progressBar.fillAmount = 0;
+            
+            //recordButton.enabled = true;
+            //progressBar.fillAmount = 0;
+            //ChangeButtonAlpha(recordButton, 1f);
             
             if (clip == null || clip.samples == 0)
             {
@@ -94,6 +98,20 @@ namespace Samples.Whisper
             
             var res = await openai.CreateAudioTranslation(req);
             OnTranscriptionComplete?.Invoke(res.Text);
+        }
+        
+        void ChangeButtonAlpha(Button button, float alpha)
+        {
+            if (button != null)
+            {
+                Image buttonImage = button.GetComponent<Image>();
+                if (buttonImage != null)
+                {
+                    Color newColor = buttonImage.color;
+                    newColor.a = alpha; // Change alpha
+                    buttonImage.color = newColor;
+                }
+            }
         }
 
         private void Update()
